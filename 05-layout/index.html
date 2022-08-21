@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Layout</title>
+    <link rel="stylesheet" href="style.scss" />
+  </head>
+  <body>
+    <div id="app" data-state="collapsed">
+      <figure class="ui-figure" data-flip-bg>
+        <figcaption class="ui-caption">Animation</figcaption>
+      </figure>
+      <div class="ui-content">
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
+          ullam hic consectetur ducimus neque ipsam incidunt voluptatem
+          voluptatum eos. Voluptatum minus omnis provident sit architecto,
+          mollitia nihil aspernatur sed praesentium.
+        </p>
+      </div>
+    </div>
+  </body>
+  <script>
+    const figureEl = document.querySelector(".ui-figure")
+    const captionEl = document.querySelector(".ui-caption")
+    const appEl = document.querySelector("#app")
+
+    const changeState = () => {
+      app.dataset.state = app.dataset.state === "collapsed" ? "expanded" : "collapsed"
+    }
+
+    const flip = (changeStateFunction, firstEls, lastEls = firstEls) => {
+      const firstRects = firstEls.map(el => el.getBoundingClientRect())
+
+      changeStateFunction()
+
+      requestAnimationFrame(() => {
+        const lastRects = lastEls.map(el => el.getBoundingClientRect())
+
+        lastRects.forEach((lastRect, i) => {
+          const firstRect = firstRects[i];
+          const lastEl = lastEls[i];
+
+          if (!firstRect) {
+            return;
+          }
+
+          const dx = firstRect.x - lastRect.x
+          const dy = firstRect.y - lastRect.y
+          const dw = firstRect.width / lastRect.width
+          const dh = firstRect.height / lastRect.height
+
+          lastEl.style.setProperty("--dx", dx)
+          lastEl.style.setProperty("--dy", dy)
+          lastEl.style.setProperty("--dw", dw)
+          lastEl.style.setProperty("--dh", dh)
+
+          lastEl.dataset.flip = "invert"
+
+          requestAnimationFrame(() => {
+            lastEl.dataset.flip = "play"
+          })
+        })
+      })
+    }
+
+    appEl.addEventListener("click", () => {
+      flip(changeState, [figureEl, captionEl])
+    })
+  </script>
+</html>

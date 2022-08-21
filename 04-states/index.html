@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>States</title>
+    <link rel="stylesheet" href="style.scss" />
+  </head>
+  <body>
+    <form class="ui-form" data-state="subscribe">
+      <input class="ui-input" type="email" placeholder="your@email.com" />
+      <button class="ui-button" type="button" onclick="setFormState('loading')">
+        <span data-show="subscribe">Subscribe</span>
+        <span data-show="loading">Subscribing</span>
+        <span data-show="success">Success!</span>
+        <span data-show="error">Error</span>
+      </button>
+    </form>
+  </body>
+  <script>
+    const form = document.querySelector(".ui-form")
+
+    function setFormState(state) {
+      form.dataset.state = state
+
+      const activeEls = document.querySelectorAll(`[data-active]`)
+      activeEls.forEach(el => delete el.dataset.active)
+
+      const shownEls = document.querySelectorAll(`[data-show="${state}"]`)
+      shownEls.forEach(el => el.dataset.active = true)
+
+      if (state === "loading") {
+        setTimeout(() => {
+          if (Math.random() < 0.5) {
+            setFormState("error");
+          } else {
+            setFormState("success");
+          }
+        }, 2000);
+      }
+    }
+
+    setFormState("subscribe")
+  </script>
+</html>
